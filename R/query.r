@@ -1,20 +1,5 @@
-#' CIMIS Data Items
-#'
-#' List CIMIS data items.
-#'
-#' @param type The type of data item, i.e. `"Daily"` or `"Hourly"`.
-#' @return a dataframe of data items.
-#'
-#' @examples
-#' data_items()
-#'
-#' @importFrom stringr str_to_title
-#' @importFrom dplyr filter
-#' @export
-data_items = function(type = c("Daily", "Hourly")) {
-  type = match.arg(str_to_title(type), c("Daily", "Hourly"), TRUE)
-  filter(dataitems, .data$Class %in% type)
-}
+base.url = "https://et.water.ca.gov/api"
+
 
 # Default CIMIS query items
 default.items = c("day-asce-eto", "day-precip", "day-sol-rad-avg",
@@ -23,7 +8,33 @@ default.items = c("day-asce-eto", "day-precip", "day-sol-rad-avg",
   "day-rel-hum-avg", "day-dew-pnt", "day-wind-spd-avg",
   "day-wind-run", "day-soil-tmp-avg")
 
-#' Get CIMIS Data
+#' dataitems
+#'
+#' A tibble of data items and their names, classes, and providers.
+#' @docType data
+#' @keywords internal
+"dataitems"
+
+
+#' CIMIS Data Items
+#'
+#' List CIMIS data items.
+#'
+#' @param type The type of data item, i.e. `"Daily"` or `"Hourly"`.
+#' @return a dataframe of data items.
+#'
+#' @examples
+#' cimis_items()
+#'
+#' @importFrom stringr str_to_title
+#' @importFrom dplyr filter
+#' @export
+cimis_items = function(type = c("Daily", "Hourly")) {
+  type = match.arg(str_to_title(type), c("Daily", "Hourly"), TRUE)
+  filter(dataitems, .data$Class %in% type)
+}
+
+#' Query CIMIS Data
 #'
 #' Query CIMIS data using the Web API.
 #'
@@ -62,14 +73,14 @@ default.items = c("day-asce-eto", "day-precip", "day-sol-rad-avg",
 #'
 #' @examples
 #' if(is_key_set()) {
-#'   get_data(targets = 170, start.date = Sys.Date() - 4, 
+#'   cimis_data(targets = 170, start.date = Sys.Date() - 4, 
 #'     end.date = Sys.Date() - 1)
 #' } 
 #'
 #' @importFrom glue glue
 #' @importFrom stringr str_c str_to_upper
 #' @export
-get_data = function(targets, start.date, end.date, items,
+cimis_data = function(targets, start.date, end.date, items,
   measure.unit = c("E", "M"), prioritize.SCS = TRUE) {
   if (any(is.na(suppressWarnings(as.numeric(targets))))) {
     target.sep = ";"
@@ -84,22 +95,23 @@ get_data = function(targets, start.date, end.date, items,
   end.date = as.Date(end.date)
   # query
   result = basic_query(
-    glue("http://et.water.ca.gov/api/data?",
+    glue("{base.url}/data?",
       "appKey={authenv$appkey}", "&",
       "targets={str_c(targets, collapse = target.sep)}", "&",
       "startDate={start.date}", "&",
       "endDate={end.date}", "&",
       "dataItems={str_c(items, collapse = ',')}", "&",
-      "unitOfMeasure={measure.unit}", ";",
+      "unitOfMeasure={measure.unit}", "&",
       "prioritizeSCS={prioritize.SCS}"
     )
   )
   bind_records(result)
 }
 
-#' Get CIMIS Station Data
+
+#' Query CIMIS Station Metadata
 #'
-#' Get CIMIS station metadata.
+#' Query CIMIS station metadata.
 #'
 #' @param station The station ID. If missing, metadata for all stations
 #'   is returned.
@@ -107,25 +119,26 @@ get_data = function(targets, start.date, end.date, items,
 #'
 #' @examples
 #' if(is_key_set()) {
-#'   get_station()
-#'   get_station_zipcode()
-#'   get_station_spatial_zipcode()
+#'   cimis_station()
+#'   cimis_zipcode()
+#'   cimis_spatial_zipcode()
 #' } 
 #' @importFrom purrr map map_dfr
 #' @importFrom glue glue
 #' @importFrom dplyr as_tibble bind_rows
 #' @export
-get_station = function(station) {
+cimis_station = function(station) {
   if (missing(station)) {
-    url = "http://et.water.ca.gov/api/station"
+    url = glue("{base.url}/station")
   } else {
-    url = glue("http://et.water.ca.gov/api/station/{station}")
+    url = glue("{base.url}/station/{station}")
   }
   result = map(url, basic_query)
   map_dfr(result, function(s) map_dfr(s$Stations, as_tibble))
 }
 
-#' @rdname get_station
+
+#' @rdname cimis_station
 #'
 #' @param zipcode The (spatial) zip code. If missing, metadata for all 
 #'   stations is returned.
@@ -134,27 +147,28 @@ get_station = function(station) {
 #' @importFrom glue glue
 #' @importFrom dplyr as_tibble bind_rows
 #' @export
-get_station_spatial_zipcode = function(zipcode) {
+cimis_spatial_zipcode = function(zipcode) {
   if (missing(zipcode)) {
-    url = "http://et.water.ca.gov/api/spatialzipcode"
+    url = glue("{base.url}/spatialzipcode")
   } else {
-    url = glue("http://et.water.ca.gov/api/spatialzipcode/{zipcode}")
+    url = glue("{base.url}/spatialzipcode/{zipcode}")
   }
   result = map(url, basic_query)
   map_dfr(result, function(s) map_dfr(s$ZipCodes, as_tibble))
 }
 
-#' @rdname get_station
+
+#' @rdname cimis_station
 #'
 #' @importFrom purrr map_dfr
 #' @importFrom glue glue
 #' @importFrom dplyr as_tibble bind_rows
 #' @export
-get_station_zipcode = function(zipcode) {
+cimis_zipcode = function(zipcode) {
   if (missing(zipcode)) {
-    url = "http://et.water.ca.gov/api/stationzipcode"
+    url = glue("{base.url}/stationzipcode")
   } else {
-    url = glue("http://et.water.ca.gov/api/stationzipcode/{zipcode}")
+    url = glue("{base.url}/stationzipcode/{zipcode}")
   }
   result = map(url, basic_query)
   map_dfr(result, function(s) map_dfr(s$ZipCodes, as_tibble))
@@ -180,7 +194,7 @@ basic_query = function(url) {
   opts = curlOptions(connecttimeout = options()[["cimir.timeout"]])
   getURL(url, httpheader = c(Accept = "application/json"),
     header = FALSE, headerfunction = header$update,
-    write = content$update, curl = authenv$handle,
+    write = content$update, curl = cimir_handle(),
     .opts = opts)
 
   if (header$value()[['status']] != "200")
@@ -191,4 +205,14 @@ basic_query = function(url) {
 
   fromJSON(str_replace_all(content$value(), ":null", ':[null]'),
     simplifyDataFrame = FALSE)
+}
+
+#' cimir RCurl handle
+#'
+#' Get the handle for RCurl URL handling in cimir.
+#'
+#' @importFrom RCurl getCurlHandle
+#' @keywords internal
+cimir_handle = function() {
+  getCurlHandle()
 }

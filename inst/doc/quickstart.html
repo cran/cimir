@@ -12,7 +12,7 @@
 
 <meta name="author" content="Michael Koohafkan" />
 
-<meta name="date" content="2018-12-24" />
+<meta name="date" content="2019-03-13" />
 
 <title>Quick Start</title>
 
@@ -300,7 +300,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Quick Start</h1>
 <h4 class="author"><em>Michael Koohafkan</em></h4>
-<h4 class="date"><em>2018-12-24</em></h4>
+<h4 class="date"><em>2019-03-13</em></h4>
 
 
 
@@ -309,8 +309,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(cimir)</a></code></pre></div>
 <p>If you want <code>cimir</code> to automatically use an existing AppKey when you attach the library, you can either set the option <code>cimir.appkey</code> in your <code>.Rprofile</code> or create an environment variable <code>CIMIS_APPKEY</code>. To set an AppKey for a single session, use <code>set_key()</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">set_key</span>(<span class="st">&quot;YOUR-APP-KEY-HERE&quot;</span>)</a></code></pre></div>
-<p>There are two types of CIMIS queries: station queries and data queries. Station queries return metadata on stations, while data queries return environmental monitoring data. For a list of possible data items, use the function <code>data_items()</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">data_items</span>()</a>
+<p>There are two types of CIMIS queries: station queries and data queries. Station queries return metadata on stations, while data queries return environmental monitoring data. For a list of possible data items, use the function <code>cimis_items()</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">cimis_items</span>()</a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt;                Item                      Name  Class  Provider</span></a>
 <a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt; 1   day-air-tmp-avg   Average Air Temperature  Daily       WSN</span></a>
 <a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt; 2   day-air-tmp-avg   Average Air Temperature  Daily       WSN</span></a>
@@ -353,9 +353,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-41" title="41"><span class="co">#&gt; 39     hly-vap-pres            Vapor Pressure Hourly       WSN</span></a>
 <a class="sourceLine" id="cb3-42" title="42"><span class="co">#&gt; 40     hly-wind-dir            Wind Direction Hourly       WSN</span></a>
 <a class="sourceLine" id="cb3-43" title="43"><span class="co">#&gt; 41     hly-wind-spd                Wind Speed Hourly       WSN</span></a></code></pre></div>
-<p>To get a list of station IDs, use <code>get_station()</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">get_station</span>()</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; # A tibble: 1,391 x 15</span></a>
+<p>To get a list of station IDs, use <code>cimis_station()</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">cimis_station</span>()</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; # A tibble: 1,394 x 15</span></a>
 <a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;    StationNbr Name  City  RegionalOffice County ConnectDate DisconnectDate</span></a>
 <a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;         </span></a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt;  1 1          Fres~ Fres~ South Central~ Fresno 6/7/1982    9/25/1988     </span></a>
@@ -368,13 +368,13 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt;  8 1          Fres~ Fres~ South Central~ Fresno 6/7/1982    9/25/1988     </span></a>
 <a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt;  9 1          Fres~ Fres~ South Central~ Fresno 6/7/1982    9/25/1988     </span></a>
 <a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; 10 1          Fres~ Fres~ South Central~ Fresno 6/7/1982    9/25/1988     </span></a>
-<a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt; # ... with 1,381 more rows, and 8 more variables: IsActive &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt; # ... with 1,384 more rows, and 8 more variables: IsActive &lt;chr&gt;,</span></a>
 <a class="sourceLine" id="cb4-16" title="16"><span class="co">#&gt; #   IsEtoStation &lt;chr&gt;, Elevation &lt;chr&gt;, GroundCover &lt;chr&gt;,</span></a>
 <a class="sourceLine" id="cb4-17" title="17"><span class="co">#&gt; #   HmsLatitude &lt;chr&gt;, HmsLongitude &lt;chr&gt;, ZipCodes &lt;chr&gt;,</span></a>
 <a class="sourceLine" id="cb4-18" title="18"><span class="co">#&gt; #   SitingDesc &lt;chr&gt;</span></a></code></pre></div>
-<p>To get metadata for a subset of stations, simply pass a vector of station IDs. You can also query metadata for stations associated with a particular zipcode (or spatial zipcode) <code>get_station_zipcode()</code> and <code>get_station_spatial_zipcode()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">get_station_zipcode</span>()</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; # A tibble: 1,391 x 5</span></a>
+<p>To get metadata for a subset of stations, simply pass a vector of station IDs. You can also query metadata for stations associated with a particular zipcode (or spatial zipcode) <code>cimis_zipcode()</code> and <code>cimis_spatial_zipcode()</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">cimis_zipcode</span>()</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; # A tibble: 1,394 x 5</span></a>
 <a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt;    StationNbr ZipCode ConnectDate DisconnectDate IsActive</span></a>
 <a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;         &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;   </span></a>
 <a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt;  1         99 90401   12/11/1992  5/8/2050       True    </span></a>
@@ -387,8 +387,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt;  8         99 90408   12/11/1992  5/8/2050       True    </span></a>
 <a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt;  9         99 90409   12/11/1992  5/8/2050       True    </span></a>
 <a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt; 10         99 90410   12/11/1992  5/8/2050       True    </span></a>
-<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt; # ... with 1,381 more rows</span></a>
-<a class="sourceLine" id="cb5-16" title="16"><span class="kw">get_station_spatial_zipcode</span>()</a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt; # ... with 1,384 more rows</span></a>
+<a class="sourceLine" id="cb5-16" title="16"><span class="kw">cimis_spatial_zipcode</span>()</a>
 <a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt; # A tibble: 1,715 x 4</span></a>
 <a class="sourceLine" id="cb5-18" title="18"><span class="co">#&gt;    ZipCode ConnectDate DisconnectDate IsActive</span></a>
 <a class="sourceLine" id="cb5-19" title="19"><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;   </span></a>
@@ -403,8 +403,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb5-28" title="28"><span class="co">#&gt;  9 89013   2/20/2003   12/31/2030     True    </span></a>
 <a class="sourceLine" id="cb5-29" title="29"><span class="co">#&gt; 10 89019   2/20/2003   12/31/2030     True    </span></a>
 <a class="sourceLine" id="cb5-30" title="30"><span class="co">#&gt; # ... with 1,705 more rows</span></a></code></pre></div>
-<p>Data queries also support zipcodes, spatial coordinates (latitude and longitude, in decimal degrees) and street addresses, as well as options for data units and data providers. See <code>?get_data</code> and the <a href="http://et.water.ca.gov/Rest/Index">CIMIS Web API documentation</a> for more information. Once the stations or regions of interest are identified, you can retrieve data using <code>get_data()</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">get_data</span>(<span class="dt">targets =</span> <span class="dv">170</span>, <span class="dt">start.date =</span> <span class="st">&quot;2018-09-25&quot;</span>, <span class="dt">end.date =</span> <span class="st">&quot;2018-10-01&quot;</span>)</a>
+<p>Once the stations or regions of interest are identified, you can retrieve data using <code>query_cimis()</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">cimis_data</span>(<span class="dt">targets =</span> <span class="dv">170</span>, <span class="dt">start.date =</span> <span class="st">&quot;2018-09-25&quot;</span>, <span class="dt">end.date =</span> <span class="st">&quot;2018-10-01&quot;</span>)</a>
 <a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt; # A tibble: 98 x 13</span></a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;    Name  Type  Owner Date       Julian Station Standard ZipCodes Scope</span></a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;date&gt;      &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;</span></a>
@@ -420,8 +420,25 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb6-14" title="14"><span class="co">#&gt; 10 cimis stat~ wate~ 2018-09-25    268 170     english  94529, ~ daily</span></a>
 <a class="sourceLine" id="cb6-15" title="15"><span class="co">#&gt; # ... with 88 more rows, and 4 more variables: Item &lt;chr&gt;, Value &lt;dbl&gt;,</span></a>
 <a class="sourceLine" id="cb6-16" title="16"><span class="co">#&gt; #   Qc &lt;chr&gt;, Unit &lt;chr&gt;</span></a></code></pre></div>
-<p>The data are returned in tidy format, i.e. the <code>&quot;Value&quot;</code> column displays the recorded value for the data item specified in the <code>&quot;Item&quot;</code>column. The CIMIS Web API returns a predefined set of data items by default, but custom item sets can also be passed to <code>get_data()</code>.</p>
-<p>When hourly data is retrieved, an additional column <code>&quot;Hour&quot;</code> is returned. The <code>to_datetime()</code> function provides a quick way to convert these two columns to a single <code>&quot;Datetime&quot;</code> column. Note that when mixed daily and hourly data is present in the dataframe, the daily values are assumed to correspond to midnight (00:00).</p>
+<p>The data are returned in tidy format, i.e. the <code>&quot;Value&quot;</code> column displays the recorded value for the data item specified in the <code>&quot;Item&quot;</code>column. The CIMIS Web API returns a predefined set of data items by default, but custom item sets can also be passed to <code>cimis_data()</code>. Data queries also support zipcodes, spatial coordinates (latitude and longitude, in decimal degrees) and street addresses, as well as additional options for data units and data providers. See <code>?cimis_data</code> and the <a href="http://et.water.ca.gov/Rest/Index">CIMIS Web API documentation</a> for more information.</p>
+<p>When hourly data is retrieved, an additional column <code>&quot;Hour&quot;</code> is returned. The <code>cimis_to_datetime()</code> function provides a quick way to combine the columns <code>&quot;Date&quot;</code> and <code>&quot;Hour&quot;</code> to a single <code>&quot;Datetime&quot;</code> column. Note that when mixed daily and hourly data is present in the dataframe, the daily values are assumed to correspond to midnight (00:00).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">cimis_to_datetime</span>(<span class="kw">cimis_data</span>(<span class="dt">targets =</span> <span class="dv">170</span>, <span class="dt">start.date =</span> <span class="st">&quot;2018-09-25&quot;</span>,</a>
+<a class="sourceLine" id="cb7-2" title="2">  <span class="dt">end.date =</span> <span class="st">&quot;2018-09-27&quot;</span>, <span class="dt">items =</span> <span class="kw">c</span>(<span class="st">&quot;hly-soil-tmp&quot;</span>, <span class="st">&quot;day-air-tmp-avg&quot;</span>)))</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; # A tibble: 75 x 13</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt;    Name  Type  Owner Datetime            Julian Station Standard ZipCodes</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;dttm&gt;               &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   </span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt;  1 cimis stat~ wate~ 2018-09-25 00:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt;  2 cimis stat~ wate~ 2018-09-26 00:00:00    269 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co">#&gt;  3 cimis stat~ wate~ 2018-09-27 00:00:00    270 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt;  4 cimis stat~ wate~ 2018-09-25 01:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co">#&gt;  5 cimis stat~ wate~ 2018-09-25 02:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt;  6 cimis stat~ wate~ 2018-09-25 03:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="co">#&gt;  7 cimis stat~ wate~ 2018-09-25 04:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co">#&gt;  8 cimis stat~ wate~ 2018-09-25 05:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co">#&gt;  9 cimis stat~ wate~ 2018-09-25 06:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-15" title="15"><span class="co">#&gt; 10 cimis stat~ wate~ 2018-09-25 07:00:00    268 170     english  94529, ~</span></a>
+<a class="sourceLine" id="cb7-16" title="16"><span class="co">#&gt; # ... with 65 more rows, and 5 more variables: Scope &lt;chr&gt;, Item &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb7-17" title="17"><span class="co">#&gt; #   Value &lt;dbl&gt;, Qc &lt;chr&gt;, Unit &lt;chr&gt;</span></a></code></pre></div>
 
 
 
