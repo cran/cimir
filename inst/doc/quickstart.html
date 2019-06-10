@@ -12,7 +12,7 @@
 
 <meta name="author" content="Michael Koohafkan" />
 
-<meta name="date" content="2019-03-13" />
+<meta name="date" content="2019-03-18" />
 
 <title>Quick Start</title>
 
@@ -291,6 +291,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -299,8 +302,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">Quick Start</h1>
-<h4 class="author"><em>Michael Koohafkan</em></h4>
-<h4 class="date"><em>2019-03-13</em></h4>
+<h4 class="author">Michael Koohafkan</h4>
+<h4 class="date">2019-03-18</h4>
 
 
 
@@ -420,8 +423,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb6-14" title="14"><span class="co">#&gt; 10 cimis stat~ wate~ 2018-09-25    268 170     english  94529, ~ daily</span></a>
 <a class="sourceLine" id="cb6-15" title="15"><span class="co">#&gt; # ... with 88 more rows, and 4 more variables: Item &lt;chr&gt;, Value &lt;dbl&gt;,</span></a>
 <a class="sourceLine" id="cb6-16" title="16"><span class="co">#&gt; #   Qc &lt;chr&gt;, Unit &lt;chr&gt;</span></a></code></pre></div>
-<p>The data are returned in tidy format, i.e. the <code>&quot;Value&quot;</code> column displays the recorded value for the data item specified in the <code>&quot;Item&quot;</code>column. The CIMIS Web API returns a predefined set of data items by default, but custom item sets can also be passed to <code>cimis_data()</code>. Data queries also support zipcodes, spatial coordinates (latitude and longitude, in decimal degrees) and street addresses, as well as additional options for data units and data providers. See <code>?cimis_data</code> and the <a href="http://et.water.ca.gov/Rest/Index">CIMIS Web API documentation</a> for more information.</p>
-<p>When hourly data is retrieved, an additional column <code>&quot;Hour&quot;</code> is returned. The <code>cimis_to_datetime()</code> function provides a quick way to combine the columns <code>&quot;Date&quot;</code> and <code>&quot;Hour&quot;</code> to a single <code>&quot;Datetime&quot;</code> column. Note that when mixed daily and hourly data is present in the dataframe, the daily values are assumed to correspond to midnight (00:00).</p>
+<p>The data are returned in tidy format, i.e. the <code>&quot;Value&quot;</code> column displays the recorded value for the data item specified in the <code>&quot;Item&quot;</code> column. The CIMIS Web API returns a predefined set of data items by default, but custom item sets can also be passed to <code>cimis_data()</code>. Data queries also support zipcodes, spatial coordinates (latitude and longitude, in decimal degrees) and street addresses, as well as additional options for data units and data providers. See <code>?cimis_data</code> and the <a href="http://et.water.ca.gov/Rest/Index">CIMIS Web API documentation</a> for more information.</p>
+<p>When hourly data is retrieved, an additional column <code>&quot;Hour&quot;</code> is returned. If both hourly and daily data items are requested, the <code>&quot;Hour&quot;</code> column will be filled with <code>NA</code> values for the daily data items. The <code>cimis_to_datetime()</code> function provides a quick way to combine the columns <code>&quot;Date&quot;</code> and <code>&quot;Hour&quot;</code> to a single <code>&quot;Datetime&quot;</code> column. Note that when mixed daily and hourly data is present in the dataframe, the daily values are assumed to correspond to midnight (00:00).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">cimis_to_datetime</span>(<span class="kw">cimis_data</span>(<span class="dt">targets =</span> <span class="dv">170</span>, <span class="dt">start.date =</span> <span class="st">&quot;2018-09-25&quot;</span>,</a>
 <a class="sourceLine" id="cb7-2" title="2">  <span class="dt">end.date =</span> <span class="st">&quot;2018-09-27&quot;</span>, <span class="dt">items =</span> <span class="kw">c</span>(<span class="st">&quot;hly-soil-tmp&quot;</span>, <span class="st">&quot;day-air-tmp-avg&quot;</span>)))</a>
 <a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; # A tibble: 75 x 13</span></a>
