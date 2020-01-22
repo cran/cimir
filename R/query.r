@@ -34,6 +34,31 @@ cimis_items = function(type = c("Daily", "Hourly")) {
   filter(dataitems, .data$Class %in% type)
 }
 
+#' CIMIS Data Flags
+#'
+#' List CIMIS data quality control flags.
+#'
+#' @param type The type of data flag, i.e. `"Severe"` or `"Informative"`.
+#' @param period The Time period that data was collected, i.e. "Current" or
+#'   "Former" (pre-1995).
+#' @return a dataframe of data flags.
+#'
+#' @seealso [CIMIS Data Overview - Quality Control](https://cimis.water.ca.gov/Resources.aspx)
+#'
+#' @examples
+#' cimis_flags()
+#' cimis_flags("Informative")
+#' cimis_flags("Severe", period = "Former")
+#'
+#' @importFrom stringr str_to_title
+#' @importFrom dplyr filter
+#' @export
+cimis_flags = function(type = c("Severe", "Informative"), period = "Current") {
+  type = match.arg(str_to_title(type), c("Severe", "Informative"), TRUE)
+  period = match.arg(str_to_title(period), c("Current", "Former"), TRUE)
+  filter(dataflags, .data$Class %in% type, .data$Period %in% period)
+}
+
 #' Query CIMIS Data
 #'
 #' Query CIMIS data using the Web API.
@@ -88,7 +113,7 @@ cimis_data = function(targets, start.date, end.date, items,
     target.sep = ","
   }
   if (missing(items))
-    items = default.items 
+    items = default.items
   measure.unit = match.arg(str_to_upper(measure.unit), c("E", "M"), FALSE)
   prioritize.SCS = ifelse(prioritize.SCS, "Y", "N")
   start.date = as.Date(start.date)
@@ -187,8 +212,8 @@ cimis_zipcode = function(zipcode) {
 #' @importFrom stringr str_replace_all
 #' @keywords internal
 basic_query = function(url) {
-  if (length(authenv$appkey) < 1)
-    stop('No API key available. Specify key with "set_key()".')
+  if (!is_key_set())
+    stop("No API key available. Specify key with \"set_key()\".")
   result = curl_fetch_memory(url, handle = cimir_handle())
   if (result$status_code != 200L)
     stop("CIMIS query failed with status ",
@@ -198,19 +223,25 @@ basic_query = function(url) {
       call. = FALSE)
   value = rawToChar(result$content)
   Encoding(value) = "UTF-8"
-  fromJSON(str_replace_all(value, ":null", ':[null]'),
+  # check if request was rejected
+  if (str_detect(value, "Request Rejected")) {
+    stop("The CIMIS API returned an error. Check that your API key is correct.",
+      "\n", "CIMIS error message:", "\n",
+      value, call. = FALSE)
+  }
+  fromJSON(str_replace_all(value, ":null", ":[null]"),
     simplifyDataFrame = FALSE)
 }
 
-#' cimir RCurl handle
+#' cimir curl handle
 #'
-#' Get the handle for RCurl URL handling in cimir.
+#' Get the handle for curl URL handling in cimir.
 #'
 #' @importFrom curl new_handle handle_setopt handle_setheaders
 #' @keywords internal
 cimir_handle = function() {
   h = new_handle()
-  handle_setopt(h, connecttimeout = options()[["cimir.timeout"]])
+  handle_setopt(h, connecttimeout = getOption("cimir.timeout"))
   handle_setheaders(h, Accept = "application/json")
   h
 }

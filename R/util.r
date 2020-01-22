@@ -1,3 +1,5 @@
+cimis.tz = "Etc/GMT+8"
+
 #' To Datetime
 #'
 #' Collapse The Date and Hour columns to a single DateTime Column.
@@ -25,7 +27,7 @@ cimis_to_datetime = function(d) {
   rename(select(mutate(d,
     Hour = if_else(is.na(.data$Hour), "0000", .data$Hour),
     Date = as.POSIXct(str_c(.data$Date, " ", .data$Hour),
-      format = "%Y-%m-%d %H%M"), tz = "Etc/GMT+8"),
+      format = "%Y-%m-%d %H%M", tz = cimis.tz)),
     -.data$Hour
   ), Datetime = .data$Date)
 }
@@ -53,7 +55,7 @@ record_to_df = function(record) {
     Julian = as.integer(.data$Julian),
     Data = list(bind_rows(map(record[data.names], as_tibble),
       .id = "Item"))
-  ))
+  ), cols = c(.data$Data))
 }
 
 
@@ -73,8 +75,8 @@ record_to_df = function(record) {
 bind_records = function(result) {
   mutate(unnest(mutate(
     map_dfr(result[[c("Data", "Providers")]], as_tibble),
-    Records = map(.data$Records, record_to_df)
-  )), Value = as.numeric(.data$Value))
+    Records = map(.data$Records, record_to_df)),
+    cols = c(.data$Records)), Value = as.numeric(.data$Value))
 }
 
 #' Split CIMIS Query
@@ -126,12 +128,12 @@ cimis_split_query = function(targets, start.date, end.date, items, max.records =
 date_seq = function(start.date, end.date, max.length, multiplier) {
   start.date = as.Date(start.date)
   end.date = as.Date(end.date)
-  num.records = as.numeric((end.date - start.date) * multiplier)
+  num.records = as.numeric(end.date - start.date) * multiplier
   if (num.records < max.length) {
     tibble(start.date = start.date, end.date = end.date)
   } else {
     num.queries = as.integer(ceiling(num.records / max.length))
-    seq.start = seq(start.date, end.date, length.out = num.queries)
+    seq.start = seq(start.date, end.date, length.out = num.queries + 1)
     starts = head(seq.start, -1)
     ends = c(head(tail(seq.start, -1), -1) - 1, tail(seq.start, 1))
     tibble(start.date = starts, end.date = ends)
@@ -149,12 +151,14 @@ date_seq = function(start.date, end.date, max.length, multiplier) {
 #'   South-southeast (SSE), South-southwest (SSW), West-southwest (WSW),
 #'   West-northwest (WNW), and North-northwest (NNW).
 #'
-#' @return A numeric vector of degrees corresponding to the middle azimumth
+#' @return A numeric vector of degrees corresponding to the middle azimuth
 #'   of the corresponding compass direction.
 #'
 #' @examples
 #' cimis_compass_to_degrees("day-wind-nne")
 #' cimis_compass_to_degrees(c("SSE", "SSW", "wsw", "Wnw", "nnw"))
+#'
+#' @seealso [cimis_degrees_to_compass()]
 #'
 #' @importFrom dplyr case_when
 #' @importFrom stringr str_to_upper str_detect
@@ -175,6 +179,30 @@ cimis_compass_to_degrees = function(x) {
   if (any(is.na(res)))
     stop('Unrecognized values in arugment "x".')
   res
+}
+
+#' Degrees to Compass Direction
+#'
+#' Convert decimal degrees to Compass direction.
+#'
+#' @param x A vector of directions in decimal degrees.
+#' @return A factor vector of compass directions.
+#'
+#' @details Degrees are labeled with their corresponding 
+#'   Primary InterCardinal compass direction, following the
+#'   convention of the CIMIS daily wind data items.
+#' 
+#' @examples
+#' cimis_degrees_to_compass(c(30, 83, 120, 140, 190, 240, 300, 330))
+#' cimis_degrees_to_compass(cimis_compass_to_degrees(c("NNE", "ENE", "ESE", 
+#'   "SSE", "SSW", "WSW", "WNW", "NNW")))
+#'
+#' @seealso [cimis_compass_to_degrees()]
+#' @export
+cimis_degrees_to_compass = function(x) {
+  breaks = c(0, 45, 90, 135, 180, 225, 270, 315, 360)
+  labels = c("NNE", "ENE", "ESE", "SSE", "SSW", "WSW", "WNW", "NNW")
+  cut(x, breaks, labels, include.lowest = TRUE)
 }
 
 
@@ -201,17 +229,17 @@ cimis_compass_to_degrees = function(x) {
 #' @importFrom dplyr mutate_at rename
 #' @importFrom stringr str_split str_replace
 #' @export
-cimis_format_location = function (d, format = c("DD", "HMS")) {
+cimis_format_location = function(d, format = c("DD", "HMS")) {
   format = match.arg(str_to_upper(format), c("DD", "HMS"))
   if (format == "HMS") {
     fun = function(x)
       str_replace(str_split(x, " / ", simplify = TRUE)[, 1], "^-", "")
-  } else {
-    fun = function(x)
-      as.numeric(str_split(x, " / ", simplify = TRUE)[, 2])
-  }
+    } else {
+      fun = function(x)
+        as.numeric(str_split(x, " / ", simplify = TRUE)[, 2])
+      }
   rename(
     mutate_at(d, c("HmsLatitude", "HmsLongitude"), fun),
     Latitude = .data$HmsLatitude, Longitude = .data$HmsLongitude
-  ) 
+  )
 }

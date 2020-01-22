@@ -14,7 +14,7 @@ South-southeast (SSE), South-southwest (SSW), West-southwest (WSW),
 West-northwest (WNW), and North-northwest (NNW).}
 }
 \value{
-A numeric vector of degrees corresponding to the middle azimumth
+A numeric vector of degrees corresponding to the middle azimuth
 of the corresponding compass direction.
 }
 \description{
@@ -24,4 +24,7 @@ Convert the Compass direction labels to degrees.
 cimis_compass_to_degrees("day-wind-nne")
 cimis_compass_to_degrees(c("SSE", "SSW", "wsw", "Wnw", "nnw"))
 
+}
+\seealso{
+\code{\link[=cimis_degrees_to_compass]{cimis_degrees_to_compass()}}
 }
