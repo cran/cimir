@@ -1,6 +1,6 @@
 Package: cimir
 Title: Interface to the CIMIS Web API
-Version: 0.4-0
+Version: 0.4-1
 Authors@R: 
     person(given = "Michael",
            family = "Koohafkan",
@@ -21,10 +21,10 @@ Encoding: UTF-8
 LazyData: true
 Suggests: knitr (>= 1.21), rmarkdown (>= 1.11)
 VignetteBuilder: knitr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2020-01-22 20:15:36 UTC; mkoohafk
+Packaged: 2021-02-17 22:00:33 UTC; mkoohafk
 Author: Michael Koohafkan [aut, cre]
 Maintainer: Michael Koohafkan <michael.koohafkan@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-01-22 22:00:10 UTC
+Date/Publication: 2021-02-17 22:40:03 UTC
